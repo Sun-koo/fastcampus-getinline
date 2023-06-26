@@ -18,15 +18,4 @@ public class Place {
 
     private LocalDateTime createdAt;
     private LocalDateTime modifiedAt;
-
-    public static Place of(
-            PlaceType placeType,
-            String placeName,
-            String address,
-            String phoneNumber,
-            Integer capacity,
-            String memo
-    ) {
-        return new Place(placeType, placeName, address, phoneNumber, capacity, memo);
-    }
 }
