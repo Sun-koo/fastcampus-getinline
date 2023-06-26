@@ -3,6 +3,8 @@ package com.fastcamp.getinline.controller.api;
 import com.fastcamp.getinline.constant.PlaceType;
 import com.fastcamp.getinline.dto.APIDataResponse;
 import com.fastcamp.getinline.dto.PlaceDTO;
+import com.fastcamp.getinline.dto.PlaceRequest;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -23,9 +25,10 @@ public class APIPlaceController {
         )));
     }
 
+    @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/places")
-    public Boolean createPlace() {
-        return true;
+    public APIDataResponse<Void> createPlace(@RequestBody PlaceRequest placeRequest) {
+        return APIDataResponse.empty();
     }
 
     @GetMapping("/places/{placeId}")
@@ -45,12 +48,15 @@ public class APIPlaceController {
     }
 
     @PutMapping("/places/{placeId}")
-    public Boolean updatePlace(@PathVariable long placeId) {
-        return true;
+    public APIDataResponse<Void> updatePlace(
+            @PathVariable long placeId,
+            @RequestBody PlaceRequest placeRequest
+    ) {
+        return APIDataResponse.empty();
     }
 
     @DeleteMapping("/places/{placeId}")
-    public Boolean deletePlace(@PathVariable long placeId) {
-        return true;
+    public APIDataResponse<Void> deletePlace(@PathVariable long placeId) {
+        return APIDataResponse.empty();
     }
 }
