@@ -4,6 +4,7 @@ import com.fastcamp.getinline.constant.PlaceType;
 import com.fastcamp.getinline.dto.APIDataResponse;
 import com.fastcamp.getinline.dto.PlaceDTO;
 import com.fastcamp.getinline.dto.PlaceRequest;
+import com.fastcamp.getinline.dto.PlaceResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,8 +15,8 @@ import java.util.List;
 public class APIPlaceController {
 
     @GetMapping("/places")
-    public APIDataResponse<List<PlaceDTO>> getPlaces() {
-        return APIDataResponse.of(List.of(PlaceDTO.of(
+    public APIDataResponse<List<PlaceResponse>> getPlaces() {
+        return APIDataResponse.of(List.of(PlaceResponse.of(
                 PlaceType.COMMON,
                 "랄라배드민턴장",
                 "서울시 강남구 강남대로 1234",
@@ -32,12 +33,12 @@ public class APIPlaceController {
     }
 
     @GetMapping("/places/{placeId}")
-    public APIDataResponse<PlaceDTO> getPlace(@PathVariable long placeId) {
+    public APIDataResponse<PlaceResponse> getPlace(@PathVariable long placeId) {
         if (placeId == 2L) {
             return APIDataResponse.empty();
         }
 
-        return APIDataResponse.of(PlaceDTO.of(
+        return APIDataResponse.of(PlaceResponse.of(
                 PlaceType.COMMON,
                 "랄라배드민턴장",
                 "서울시 강남구 강남대로 1234",
