@@ -1,14 +1,26 @@
 package com.fastcamp.getinline.controller.api;
 
+import com.fastcamp.getinline.constant.PlaceType;
+import com.fastcamp.getinline.dto.APIDataResponse;
+import com.fastcamp.getinline.dto.PlaceDTO;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RequestMapping("/api")
 @RestController
 public class APIPlaceController {
 
     @GetMapping("/places")
-    public String getPlaces() {
-        return "places";
+    public APIDataResponse<List<PlaceDTO>> getPlaces() {
+        return APIDataResponse.of(List.of(PlaceDTO.of(
+                PlaceType.COMMON,
+                "랄라배드민턴장",
+                "서울시 강남구 강남대로 1234",
+                "010-1234-5678",
+                30,
+                "신장개업"
+        )));
     }
 
     @PostMapping("/places")
@@ -17,8 +29,19 @@ public class APIPlaceController {
     }
 
     @GetMapping("/places/{placeId}")
-    public String getPlace(@PathVariable long placeId) {
-        return "placeDetail";
+    public APIDataResponse<PlaceDTO> getPlace(@PathVariable long placeId) {
+        if (placeId == 2L) {
+            return APIDataResponse.empty();
+        }
+
+        return APIDataResponse.of(PlaceDTO.of(
+                PlaceType.COMMON,
+                "랄라배드민턴장",
+                "서울시 강남구 강남대로 1234",
+                "010-1234-5678",
+                30,
+                "신장개업"
+        ));
     }
 
     @PutMapping("/places/{placeId}")
