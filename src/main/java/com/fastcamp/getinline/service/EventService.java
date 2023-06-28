@@ -1,7 +1,9 @@
 package com.fastcamp.getinline.service;
 
+import com.fastcamp.getinline.constant.ErrorCode;
 import com.fastcamp.getinline.constant.EventStatus;
 import com.fastcamp.getinline.dto.EventDTO;
+import com.fastcamp.getinline.exception.GeneralException;
 import com.fastcamp.getinline.repository.EventRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -23,22 +25,48 @@ public class EventService {
             LocalDateTime eventStartDateTime,
             LocalDateTime eventEndDateTime
     ) {
-        return eventRepository.findEvents(placeId, eventName, eventStatus, eventStartDateTime, eventEndDateTime);
+        try {
+            return eventRepository.findEvents(
+                    placeId,
+                    eventName,
+                    eventStatus,
+                    eventStartDateTime,
+                    eventEndDateTime
+            );
+        } catch (Exception e) {
+            throw new GeneralException(ErrorCode.DATA_ACCESS_ERROR, e);
+        }
     }
 
-    public Optional<EventDTO> getEvent(long eventId) {
-        return eventRepository.findEvent(eventId);
+    public Optional<EventDTO> getEvent(Long eventId) {
+        try {
+            return eventRepository.findEvent(eventId);
+        } catch (Exception e) {
+            throw new GeneralException(ErrorCode.DATA_ACCESS_ERROR, e);
+        }
     }
 
     public boolean createEvent(EventDTO eventDTO) {
-        return eventRepository.insertEvent(eventDTO);
+        try {
+            return eventRepository.insertEvent(eventDTO);
+        } catch (Exception e) {
+            throw new GeneralException(ErrorCode.DATA_ACCESS_ERROR, e);
+        }
     }
 
     public boolean updateEvent(Long eventId, EventDTO eventDTO) {
-        return eventRepository.updateEvent(eventId, eventDTO);
+        try {
+            return eventRepository.updateEvent(eventId, eventDTO);
+        } catch (Exception e) {
+            throw new GeneralException(ErrorCode.DATA_ACCESS_ERROR, e);
+        }
     }
 
     public boolean deleteEvent(Long eventId) {
-        return eventRepository.deleteEvent(eventId);
+        try {
+            return eventRepository.deleteEvent(eventId);
+        } catch (Exception e) {
+            throw new GeneralException(ErrorCode.DATA_ACCESS_ERROR, e);
+        }
     }
 }

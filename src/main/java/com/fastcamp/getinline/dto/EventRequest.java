@@ -1,17 +1,21 @@
 package com.fastcamp.getinline.dto;
 
 import com.fastcamp.getinline.constant.EventStatus;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.PositiveOrZero;
 
 import java.time.LocalDateTime;
 
 public record EventRequest(
-        Long placeId,
-        String eventName,
-        EventStatus eventStatus,
-        LocalDateTime eventStartDatetime,
-        LocalDateTime eventEndDatetime,
-        Integer currentNumberOfPeople,
-        Integer capacity,
+        @NotNull @Positive Long placeId,
+        @NotBlank String eventName,
+        @NotNull EventStatus eventStatus,
+        @NotNull LocalDateTime eventStartDatetime,
+        @NotNull LocalDateTime eventEndDatetime,
+        @NotNull @PositiveOrZero Integer currentNumberOfPeople,
+        @NotNull @Positive Integer capacity,
         String memo
 ) {
     public static EventRequest of(
