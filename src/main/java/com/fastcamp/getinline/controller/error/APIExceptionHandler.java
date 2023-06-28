@@ -3,6 +3,7 @@ package com.fastcamp.getinline.controller.error;
 import com.fastcamp.getinline.constant.ErrorCode;
 import com.fastcamp.getinline.dto.APIErrorResponse;
 import com.fastcamp.getinline.exception.GeneralException;
+import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -17,16 +18,19 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 public class APIExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler
+    public ResponseEntity<Object> validation(ConstraintViolationException e, WebRequest request) {
+        ErrorCode errorCode = ErrorCode.VALIDATION_ERROR;
+        HttpStatus status = errorCode.getHttpStatus();
+
+        return handleExceptionInternal(e, errorCode, HttpHeaders.EMPTY, status, request);
+    }
+
+    @ExceptionHandler
     public ResponseEntity<Object> general(GeneralException e, WebRequest request) {
         ErrorCode errorCode = e.getErrorCode();
         HttpStatus status = errorCode.getHttpStatus();
 
-        return super.handleExceptionInternal(
-                e,
-                APIErrorResponse.of(false, errorCode.getCode(), errorCode.getMessage()),
-                HttpHeaders.EMPTY,
-                status,
-                request);
+        return handleExceptionInternal(e, errorCode, HttpHeaders.EMPTY, status, request);
     }
 
     @ExceptionHandler
@@ -34,12 +38,7 @@ public class APIExceptionHandler extends ResponseEntityExceptionHandler {
         ErrorCode errorCode = ErrorCode.INTERNAL_ERROR;
         HttpStatus status = errorCode.getHttpStatus();
 
-        return super.handleExceptionInternal(
-                e,
-                APIErrorResponse.of(false, errorCode.getCode(), errorCode.getMessage()),
-                HttpHeaders.EMPTY,
-                status,
-                request);
+        return handleExceptionInternal(e, errorCode, HttpHeaders.EMPTY, status, request);
     }
 
     @Override
@@ -47,18 +46,29 @@ public class APIExceptionHandler extends ResponseEntityExceptionHandler {
             Exception ex,
             Object body,
             HttpHeaders headers,
-            HttpStatusCode statusCode,
+            HttpStatusCode status,
             WebRequest request
     ) {
-        ErrorCode errorCode = statusCode.is4xxClientError() ?
-                ErrorCode.BAD_REQUEST :
+        ErrorCode errorCode = status.is4xxClientError() ?
+                ErrorCode.SPRING_BAD_REQUEST :
                 ErrorCode.SPRING_INTERNAL_ERROR;
 
+        return handleExceptionInternal(ex, errorCode, headers, status, request);
+    }
+
+    private ResponseEntity<Object> handleExceptionInternal(
+            Exception e,
+            ErrorCode errorCode,
+            HttpHeaders headers,
+            HttpStatus status,
+            WebRequest request
+    ) {
         return super.handleExceptionInternal(
-                ex,
-                APIErrorResponse.of(false, errorCode.getCode(), errorCode.getMessage()),
+                e,
+                APIErrorResponse.of(false, errorCode.getCode(), errorCode.getMessage(e)),
                 headers,
-                statusCode,
-                request);
+                status,
+                request
+        );
     }
 }
