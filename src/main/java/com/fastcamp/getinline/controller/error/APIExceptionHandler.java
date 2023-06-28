@@ -22,7 +22,7 @@ public class APIExceptionHandler extends ResponseEntityExceptionHandler {
         ErrorCode errorCode = ErrorCode.VALIDATION_ERROR;
         HttpStatus status = errorCode.getHttpStatus();
 
-        return handleExceptionInternal(e, errorCode, HttpHeaders.EMPTY, status, request);
+        return handleException(e, errorCode, HttpHeaders.EMPTY, status, request);
     }
 
     @ExceptionHandler
@@ -30,7 +30,7 @@ public class APIExceptionHandler extends ResponseEntityExceptionHandler {
         ErrorCode errorCode = e.getErrorCode();
         HttpStatus status = errorCode.getHttpStatus();
 
-        return handleExceptionInternal(e, errorCode, HttpHeaders.EMPTY, status, request);
+        return handleException(e, errorCode, HttpHeaders.EMPTY, status, request);
     }
 
     @ExceptionHandler
@@ -38,7 +38,7 @@ public class APIExceptionHandler extends ResponseEntityExceptionHandler {
         ErrorCode errorCode = ErrorCode.INTERNAL_ERROR;
         HttpStatus status = errorCode.getHttpStatus();
 
-        return handleExceptionInternal(e, errorCode, HttpHeaders.EMPTY, status, request);
+        return handleException(e, errorCode, HttpHeaders.EMPTY, status, request);
     }
 
     @Override
@@ -52,11 +52,14 @@ public class APIExceptionHandler extends ResponseEntityExceptionHandler {
         ErrorCode errorCode = status.is4xxClientError() ?
                 ErrorCode.SPRING_BAD_REQUEST :
                 ErrorCode.SPRING_INTERNAL_ERROR;
+        HttpStatus httpStatus = status.is4xxClientError() ?
+                HttpStatus.BAD_REQUEST :
+                HttpStatus.INTERNAL_SERVER_ERROR;
 
-        return handleExceptionInternal(ex, errorCode, headers, status, request);
+        return handleException(ex, errorCode, headers, httpStatus, request);
     }
 
-    private ResponseEntity<Object> handleExceptionInternal(
+    private ResponseEntity<Object> handleException(
             Exception e,
             ErrorCode errorCode,
             HttpHeaders headers,
