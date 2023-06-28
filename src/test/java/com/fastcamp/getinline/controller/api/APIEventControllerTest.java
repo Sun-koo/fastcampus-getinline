@@ -2,18 +2,25 @@ package com.fastcamp.getinline.controller.api;
 
 import com.fastcamp.getinline.constant.ErrorCode;
 import com.fastcamp.getinline.constant.EventStatus;
+import com.fastcamp.getinline.dto.EventDTO;
 import com.fastcamp.getinline.dto.EventResponse;
+import com.fastcamp.getinline.service.EventService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -23,6 +30,9 @@ class APIEventControllerTest {
     private final MockMvc mvc;
     private final ObjectMapper mapper;
 
+    @MockBean
+    private EventService eventService;
+
     public APIEventControllerTest(
             @Autowired MockMvc mvc,
             @Autowired ObjectMapper mapper
@@ -31,13 +41,21 @@ class APIEventControllerTest {
         this.mapper = mapper;
     }
 
-    @DisplayName("[API][GET] 이벤트 리스트 조회")
+    @DisplayName("[API][GET] 이벤트 리스트 조회 + 검색 파라미터")
     @Test
     void givenNothing_whenRequestingEvents_thenReturnsListOfEventsInStandardResponse() throws Exception {
         // Given
+        given(eventService.getEvents(any(), any(), any(), any(), any())).willReturn(List.of(createEventDTO()));
 
         // When & Then
-        mvc.perform(get("/api/events"))
+        mvc.perform(
+                        get("/api/events")
+                                .queryParam("placeId", "1")
+                                .queryParam("eventName", "운동")
+                                .queryParam("eventStatus", EventStatus.OPENED.name())
+                                .queryParam("eventStartDatetime", "2021-01-01T00:00:00")
+                                .queryParam("eventEndDatetime", "2021-01-02T00:00:00")
+                )
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.data").isArray())
@@ -56,6 +74,8 @@ class APIEventControllerTest {
                 .andExpect(jsonPath("$.success").value(true))
                 .andExpect(jsonPath("$.errorCode").value(ErrorCode.OK.getCode()))
                 .andExpect(jsonPath("$.message").value(ErrorCode.OK.getMessage()));
+
+        verify(eventService).getEvents(any(), any(), any(), any(), any());
     }
 
     @DisplayName("[API][POST] 이벤트 생성")
@@ -174,4 +194,18 @@ class APIEventControllerTest {
                 .andExpect(jsonPath("$.message").value(ErrorCode.OK.getMessage()));
     }
 
+    private EventDTO createEventDTO() {
+        return EventDTO.of(
+                1L,
+                "오후 운동",
+                EventStatus.OPENED,
+                LocalDateTime.of(2021, 1, 1, 13, 0, 0),
+                LocalDateTime.of(2021, 1, 1, 16, 0, 0),
+                0,
+                24,
+                "마스크 꼭 착용하세요",
+                LocalDateTime.now(),
+                LocalDateTime.now()
+        );
+    }
 }
