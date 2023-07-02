@@ -1,5 +1,6 @@
 package com.fastcamp.getinline.constant;
 
+import com.fastcamp.getinline.exception.GeneralException;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -27,18 +28,18 @@ public enum ErrorCode {
     private final String message;
 
 
-//    public static ErrorCode valueOf(HttpStatus httpStatus) {
-//        if (httpStatus == null) { throw new GeneralException("HttpStatus is null."); }
-//
-//        return Arrays.stream(values())
-//                .filter(errorCode -> errorCode.getHttpStatus() == httpStatus)
-//                .findFirst()
-//                .orElseGet(() -> {
-//                    if (httpStatus.is4xxClientError()) { return ErrorCode.BAD_REQUEST; }
-//                    else if (httpStatus.is5xxServerError()) { return ErrorCode.INTERNAL_ERROR; }
-//                    else { return ErrorCode.OK; }
-//                });
-//    }
+    public static ErrorCode valueOf(HttpStatus httpStatus) {
+        if (httpStatus == null) { throw new GeneralException("HttpStatus is null."); }
+
+        return Arrays.stream(values())
+                .filter(errorCode -> errorCode.getHttpStatus() == httpStatus)
+                .findFirst()
+                .orElseGet(() -> {
+                    if (httpStatus.is4xxClientError()) { return ErrorCode.BAD_REQUEST; }
+                    else if (httpStatus.is5xxServerError()) { return ErrorCode.INTERNAL_ERROR; }
+                    else { return ErrorCode.OK; }
+                });
+    }
 
     public String getMessage(Throwable e) {
         return this.getMessage(this.getMessage() + " - " + e.getMessage());

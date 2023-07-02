@@ -17,8 +17,9 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDateTime;
 import java.util.List;
 
-//@Validated
+@Deprecated
 @RequiredArgsConstructor
+//@Validated
 //@RequestMapping("/api")
 //@RestController
 public class APIEventController {
@@ -30,14 +31,18 @@ public class APIEventController {
             @Positive Long placeId,
             @Size(min = 2) String eventName,
             EventStatus eventStatus,
-            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime eventStartDateTime,
-            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime eventEndDateTime
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime eventStartDatetime,
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime eventEndDatetime
     ) {
-        List<EventResponse> response = eventService
-                .getEvents(placeId, eventName, eventStatus, eventStartDateTime, eventEndDateTime)
-                .stream().map(EventResponse::from).toList();
+        List<EventResponse> eventResponses = eventService.getEvents(
+                placeId,
+                eventName,
+                eventStatus,
+                eventStartDatetime,
+                eventEndDatetime
+        ).stream().map(EventResponse::from).toList();
 
-        return APIDataResponse.of(response);
+        return APIDataResponse.of(eventResponses);
     }
 
     @ResponseStatus(HttpStatus.CREATED)

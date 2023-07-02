@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@Deprecated
 //@RequestMapping("/api")
 //@RestController
 public class APIPlaceController {
@@ -17,6 +18,7 @@ public class APIPlaceController {
     @GetMapping("/places")
     public APIDataResponse<List<PlaceResponse>> getPlaces() {
         return APIDataResponse.of(List.of(PlaceResponse.of(
+                1L,
                 PlaceType.COMMON,
                 "랄라배드민턴장",
                 "서울시 강남구 강남대로 1234",
@@ -33,12 +35,13 @@ public class APIPlaceController {
     }
 
     @GetMapping("/places/{placeId}")
-    public APIDataResponse<PlaceResponse> getPlace(@PathVariable long placeId) {
-        if (placeId == 2L) {
+    public APIDataResponse<PlaceResponse> getPlace(@PathVariable Long placeId) {
+        if (placeId.equals(2L)) {
             return APIDataResponse.empty();
         }
 
         return APIDataResponse.of(PlaceResponse.of(
+                placeId,
                 PlaceType.COMMON,
                 "랄라배드민턴장",
                 "서울시 강남구 강남대로 1234",
@@ -49,15 +52,16 @@ public class APIPlaceController {
     }
 
     @PutMapping("/places/{placeId}")
-    public APIDataResponse<Void> updatePlace(
-            @PathVariable long placeId,
+    public APIDataResponse<Void> modifyPlace(
+            @PathVariable Long placeId,
             @RequestBody PlaceRequest placeRequest
     ) {
         return APIDataResponse.empty();
     }
 
     @DeleteMapping("/places/{placeId}")
-    public APIDataResponse<Void> deletePlace(@PathVariable long placeId) {
+    public APIDataResponse<Void> removePlace(@PathVariable Long placeId) {
         return APIDataResponse.empty();
     }
+
 }

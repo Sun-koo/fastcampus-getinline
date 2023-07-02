@@ -1,7 +1,6 @@
 package com.fastcamp.getinline.controller;
 
 import com.fastcamp.getinline.constant.ErrorCode;
-import com.fastcamp.getinline.constant.EventStatus;
 import com.fastcamp.getinline.domain.Event;
 import com.fastcamp.getinline.dto.EventResponse;
 import com.fastcamp.getinline.exception.GeneralException;
@@ -15,7 +14,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
-import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;

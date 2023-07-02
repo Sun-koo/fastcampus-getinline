@@ -29,13 +29,15 @@ public class AdminController {
         map.put("placeType", placeType);
         map.put("placeName", placeName);
         map.put("address", address);
+
         return new ModelAndView("admin/places", map);
     }
 
     @GetMapping("/places/{placeId}")
-    public ModelAndView adminPlaceDetail(@PathVariable long placeId) {
+    public ModelAndView adminPlaceDetail(@PathVariable Long placeId) {
         Map<String, Object> map = new HashMap<>();
         map.put("place", PlaceDTO.of(
+                placeId,
                 PlaceType.COMMON,
                 "랄라배드민턴장",
                 "서울시 강남구 강남대로 1234",
@@ -72,7 +74,17 @@ public class AdminController {
         Map<String, Object> map = new HashMap<>();
         map.put("event", EventDTO.of(
                 eventId,
-                1L,
+                PlaceDTO.of(
+                        1L,
+                        PlaceType.SPORTS,
+                        "배드민턴장",
+                        "서울시 그리구 그래동",
+                        "010-2222-3333",
+                        33,
+                        null,
+                        LocalDateTime.now(),
+                        LocalDateTime.now()
+                ),
                 "오후 운동",
                 EventStatus.OPENED,
                 LocalDateTime.of(2021, 1, 1, 13, 0, 0),
@@ -86,4 +98,5 @@ public class AdminController {
 
         return new ModelAndView("admin/event-detail", map);
     }
+
 }
