@@ -2,9 +2,11 @@ package com.fastcamp.getinline.service;
 
 import com.fastcamp.getinline.constant.ErrorCode;
 import com.fastcamp.getinline.constant.EventStatus;
+import com.fastcamp.getinline.domain.Place;
 import com.fastcamp.getinline.dto.EventDTO;
 import com.fastcamp.getinline.exception.GeneralException;
 import com.fastcamp.getinline.repository.EventRepository;
+import com.fastcamp.getinline.repository.PlaceRepository;
 import com.querydsl.core.types.Predicate;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -19,6 +21,7 @@ import java.util.stream.StreamSupport;
 public class EventService {
 
     private final EventRepository eventRepository;
+    private final PlaceRepository placeRepository;
 
     public List<EventDTO> getEvents(Predicate predicate) {
         try {
@@ -34,8 +37,8 @@ public class EventService {
             Long placeId,
             String eventName,
             EventStatus eventStatus,
-            LocalDateTime eventStartDateTime,
-            LocalDateTime eventEndDateTime
+            LocalDateTime eventStartDatetime,
+            LocalDateTime eventEndDatetime
     ) {
         try {
             return null;
@@ -58,21 +61,23 @@ public class EventService {
                 return false;
             }
 
-            eventRepository.save(eventDTO.toEntity());
+            Place place = placeRepository.findById(eventDTO.placeDto().id())
+                    .orElseThrow(() -> new GeneralException(ErrorCode.NOT_FOUND));
+            eventRepository.save(eventDTO.toEntity(place));
             return true;
         } catch (Exception e) {
             throw new GeneralException(ErrorCode.DATA_ACCESS_ERROR, e);
         }
     }
 
-    public boolean updateEvent(Long eventId, EventDTO eventDTO) {
+    public boolean updateEvent(Long eventId, EventDTO dto) {
         try {
-            if (eventId == null || eventDTO == null) {
+            if (eventId == null || dto == null) {
                 return false;
             }
 
             eventRepository.findById(eventId)
-                    .ifPresent(event -> eventRepository.save(eventDTO.updateEntity(event)));
+                    .ifPresent(event -> eventRepository.save(dto.updateEntity(event)));
 
             return true;
         } catch (Exception e) {

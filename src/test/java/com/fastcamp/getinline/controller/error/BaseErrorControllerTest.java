@@ -4,15 +4,13 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-import static org.hamcrest.CoreMatchers.containsString;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+@DisplayName("View 컨트롤러 - 에러")
 @WebMvcTest(BaseErrorController.class)
 class BaseErrorControllerTest {
 
@@ -22,14 +20,15 @@ class BaseErrorControllerTest {
         this.mvc = mvc;
     }
 
-    @DisplayName("[view][GET] 에러 페이지 - 페이지 없음(404)")
+    @DisplayName("[view][GET] 에러 페이지 - 페이지 없음")
     @Test
-    void givenWrongUri_whenRequestPage_thenReturn404ErrorPage() throws Exception {
+    void givenWrongURI_whenRequestingPage_thenReturns404ErrorPage() throws Exception {
         // Given
 
         // When & Then
-        mvc.perform(MockMvcRequestBuilders.get("/wrong-uri"))
+        mvc.perform(get("/wrong-uri"))
                 .andExpect(status().isNotFound())
                 .andDo(print());
     }
+
 }
