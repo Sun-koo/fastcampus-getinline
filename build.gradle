@@ -21,6 +21,10 @@ repositories {
     mavenCentral()
 }
 
+project.ext {
+    querydslVersion = dependencyManagement.importedProperties['querydsl.version']
+}
+
 dependencies {
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
     implementation 'org.springframework.data:spring-data-rest-hal-explorer'
@@ -38,10 +42,9 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
 
     // queryDSL 설정
-    implementation "com.querydsl:querydsl-core"
+    implementation "com.querydsl:querydsl-jpa:${project.querydslVersion}:jakarta"
     implementation "com.querydsl:querydsl-collections"
-    implementation "com.querydsl:querydsl-jpa:${dependencyManagement.importedProperties['querydsl.version']}:jakarta"
-    annotationProcessor "com.querydsl:querydsl-apt:${dependencyManagement.importedProperties['querydsl.version']}:jakarta" // querydsl JPAAnnotationProcessor 사용 지정
+    annotationProcessor "com.querydsl:querydsl-apt:${project.querydslVersion}:jakarta" // querydsl JPAAnnotationProcessor 사용 지정
     annotationProcessor "jakarta.persistence:jakarta.persistence-api" // java.lang.NoClassDefFoundError (javax.annotation.Generated) 발생 대응
     annotationProcessor "jakarta.annotation:jakarta.annotation-api" // java.lang.NoClassDefFoundError (javax.annotation.Generated) 발생 대응
 }
