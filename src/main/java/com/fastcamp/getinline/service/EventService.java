@@ -4,11 +4,14 @@ import com.fastcamp.getinline.constant.ErrorCode;
 import com.fastcamp.getinline.constant.EventStatus;
 import com.fastcamp.getinline.domain.Place;
 import com.fastcamp.getinline.dto.EventDTO;
+import com.fastcamp.getinline.dto.EventViewResponse;
 import com.fastcamp.getinline.exception.GeneralException;
 import com.fastcamp.getinline.repository.EventRepository;
 import com.fastcamp.getinline.repository.PlaceRepository;
 import com.querydsl.core.types.Predicate;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -33,15 +36,23 @@ public class EventService {
         }
     }
 
-    public List<EventDTO> getEvents(
-            Long placeId,
+    public Page<EventViewResponse> getEventViewResponse(
+            String placeName,
             String eventName,
             EventStatus eventStatus,
             LocalDateTime eventStartDatetime,
-            LocalDateTime eventEndDatetime
+            LocalDateTime eventEndDatetime,
+            Pageable pageable
     ) {
         try {
-            return null;
+            return eventRepository.findEventViewPageBySearchParams(
+                    placeName,
+                    eventName,
+                    eventStatus,
+                    eventStartDatetime,
+                    eventEndDatetime,
+                    pageable
+            );
         } catch (Exception e) {
             throw new GeneralException(ErrorCode.DATA_ACCESS_ERROR, e);
         }

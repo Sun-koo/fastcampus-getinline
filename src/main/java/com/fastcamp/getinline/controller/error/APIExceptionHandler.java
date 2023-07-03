@@ -20,26 +20,17 @@ public class APIExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler
     public ResponseEntity<Object> validation(ConstraintViolationException e, WebRequest request) {
-        ErrorCode errorCode = ErrorCode.VALIDATION_ERROR;
-        HttpStatus status = errorCode.getHttpStatus();
-
-        return handleException(e, errorCode, HttpHeaders.EMPTY, status, request);
+        return handleExceptionInternal(e, ErrorCode.VALIDATION_ERROR, request);
     }
 
     @ExceptionHandler
     public ResponseEntity<Object> general(GeneralException e, WebRequest request) {
-        ErrorCode errorCode = e.getErrorCode();
-        HttpStatus status = errorCode.getHttpStatus();
-
-        return handleException(e, errorCode, HttpHeaders.EMPTY, status, request);
+        return handleExceptionInternal(e, e.getErrorCode(), request);
     }
 
     @ExceptionHandler
     public ResponseEntity<Object> exception(Exception e, WebRequest request) {
-        ErrorCode errorCode = ErrorCode.INTERNAL_ERROR;
-        HttpStatus status = errorCode.getHttpStatus();
-
-        return handleException(e, errorCode, HttpHeaders.EMPTY, status, request);
+        return handleExceptionInternal(e, ErrorCode.INTERNAL_ERROR, request);
     }
 
     @Override
@@ -58,6 +49,10 @@ public class APIExceptionHandler extends ResponseEntityExceptionHandler {
                 HttpStatus.INTERNAL_SERVER_ERROR;
 
         return handleException(ex, errorCode, headers, httpStatus, request);
+    }
+
+    private ResponseEntity<Object> handleExceptionInternal(Exception e, ErrorCode errorCode, WebRequest request) {
+        return handleException(e, errorCode, HttpHeaders.EMPTY, errorCode.getHttpStatus(), request);
     }
 
     private ResponseEntity<Object> handleException(

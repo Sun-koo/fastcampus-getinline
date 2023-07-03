@@ -2,6 +2,7 @@ package com.fastcamp.getinline.controller.error;
 
 import com.fastcamp.getinline.constant.ErrorCode;
 import com.fastcamp.getinline.exception.GeneralException;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -15,31 +16,37 @@ public class BaseExceptionHandler {
     @ExceptionHandler
     public ModelAndView general(GeneralException e) {
         ErrorCode errorCode = e.getErrorCode();
-        HttpStatus status = errorCode.getHttpStatus();
 
         return new ModelAndView(
                 "error",
                 Map.of(
-                        "statusCode", status.value(),
-                        "errorCode", errorCode.getCode(),
-                        "message", errorCode.getMessage(e)
+                        "statusCode", errorCode.getHttpStatus().value(),
+                        "errorCode", errorCode,
+                        "message", errorCode.getMessage()
                 ),
-                status);
+                errorCode.getHttpStatus()
+        );
     }
 
     @ExceptionHandler
-    public ModelAndView exception(Exception e) {
-        ErrorCode errorCode = ErrorCode.INTERNAL_ERROR;
-        HttpStatus status = errorCode.getHttpStatus();
+    public ModelAndView exception(Exception e, HttpServletResponse response) {
+        HttpStatus httpStatus = HttpStatus.valueOf(response.getStatus());
+        ErrorCode errorCode = httpStatus.is4xxClientError() ? ErrorCode.BAD_REQUEST : ErrorCode.INTERNAL_ERROR;
+
+        if (httpStatus == HttpStatus.OK) {
+            httpStatus = HttpStatus.FORBIDDEN;
+            errorCode = ErrorCode.BAD_REQUEST;
+        }
 
         return new ModelAndView(
                 "error",
                 Map.of(
-                        "statusCode", status.value(),
-                        "errorCode", errorCode.getCode(),
+                        "statusCode", httpStatus.value(),
+                        "errorCode", errorCode,
                         "message", errorCode.getMessage(e)
                 ),
-                status);
+                httpStatus
+        );
     }
 
 }
