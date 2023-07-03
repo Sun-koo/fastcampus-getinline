@@ -1,6 +1,3 @@
--- noinspection SqlNoDataSourceInspectionForFile
--- noinspection SqlResolveForFile
-
 insert into `place` (`place_type`, `place_name`, `address`, `phone_number`, `capacity`, `memo`)
 values
     ('SPORTS', '서울 배드민턴장', '경기도 성남시 대왕판교로 999', '010-9999-0000', 20, '판교는 정말 체크남방셔츠 뿐인가'),
@@ -14,10 +11,10 @@ insert into `event` (`place_id`, `event_name`, `event_status`, `event_start_date
 values
     (1, '운동1', 'OPENED', '2021-01-01 09:00:00', '2021-01-01 12:00:00', 0, 20, 'test memo1'),
     (1, '운동2', 'OPENED', '2021-01-01 13:00:00', '2021-01-01 12:00:00', 0, 20, 'test memo2'),
-    Expand All
-	@@ -10,3 +19,15 @@ values
-(2, '행사3', 'CLOSED', '2021-01-04 09:00:00', '2021-01-04 12:00:00', 0, 30, 'test memo5'),
-(3, '오전 스키', 'OPENED', '2021-02-01 08:00:00', '2021-02-01 12:30:00', 12, 50, 'test memo6')
+    (2, '행사1', 'OPENED', '2021-01-02 09:00:00', '2021-01-02 12:00:00', 0, 30, 'test memo3'),
+    (2, '행사2', 'OPENED', '2021-01-03 09:00:00', '2021-01-03 12:00:00', 0, 30, 'test memo4'),
+    (2, '행사3', 'CLOSED', '2021-01-04 09:00:00', '2021-01-04 12:00:00', 0, 30, 'test memo5'),
+    (3, '오전 스키', 'OPENED', '2021-02-01 08:00:00', '2021-02-01 12:30:00', 12, 50, 'test memo6')
 ;
 
 insert into `admin` (`email`, `nickname`, `password`, `phone_number`, `memo`)
