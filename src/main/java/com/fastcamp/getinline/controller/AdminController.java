@@ -1,9 +1,20 @@
 package com.fastcamp.getinline.controller;
 
+import com.fastcamp.getinline.constant.ErrorCode;
 import com.fastcamp.getinline.constant.EventStatus;
 import com.fastcamp.getinline.constant.PlaceType;
+import com.fastcamp.getinline.domain.Event;
+import com.fastcamp.getinline.domain.Place;
 import com.fastcamp.getinline.dto.EventDTO;
+import com.fastcamp.getinline.dto.EventResponse;
 import com.fastcamp.getinline.dto.PlaceDTO;
+import com.fastcamp.getinline.dto.PlaceResponse;
+import com.fastcamp.getinline.exception.GeneralException;
+import com.fastcamp.getinline.service.EventService;
+import com.fastcamp.getinline.service.PlaceService;
+import com.querydsl.core.types.Predicate;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.querydsl.binding.QuerydslPredicate;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,90 +24,77 @@ import org.springframework.web.servlet.ModelAndView;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+@RequiredArgsConstructor
 @RequestMapping("/admin")
 @Controller
 public class AdminController {
 
-    @GetMapping("/places")
-    public ModelAndView adminPlaces(
-            PlaceType placeType,
-            String placeName,
-            String address
-    ) {
-        Map<String, Object> map = new HashMap<>();
-        map.put("placeType", placeType);
-        map.put("placeName", placeName);
-        map.put("address", address);
+    private final EventService eventService;
+    private final PlaceService placeService;
 
-        return new ModelAndView("admin/places", map);
+    @GetMapping("/places")
+    public ModelAndView adminPlaces(@QuerydslPredicate(root = Place.class) Predicate predicate) {
+        List<PlaceResponse> places = placeService.getPlaces(predicate)
+                .stream()
+                .map(PlaceResponse::from)
+                .toList();
+
+        return new ModelAndView(
+                "admin/places",
+                Map.of(
+                        "places", places,
+                        "placeType", PlaceType.values()
+                )
+        );
     }
 
     @GetMapping("/places/{placeId}")
     public ModelAndView adminPlaceDetail(@PathVariable Long placeId) {
-        Map<String, Object> map = new HashMap<>();
-        map.put("place", PlaceDTO.of(
-                placeId,
-                PlaceType.COMMON,
-                "랄라배드민턴장",
-                "서울시 강남구 강남대로 1234",
-                "010-1234-5678",
-                30,
-                "신장개업",
-                LocalDateTime.now(),
-                LocalDateTime.now()
-        ));
+        PlaceResponse place = placeService.getPlace(placeId)
+                .map(PlaceResponse::from)
+                .orElseThrow(() -> new GeneralException(ErrorCode.NOT_FOUND));
 
-        return new ModelAndView("admin/place-detail", map);
+        return new ModelAndView(
+                "admin/place-detail",
+                Map.of(
+                        "place", place,
+                        "placeType", PlaceType.values()
+                )
+        );
     }
 
     @GetMapping("/events")
-    public ModelAndView adminEvents(
-            Long placeId,
-            String eventName,
-            EventStatus eventStatus,
-            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime eventStartDatetime,
-            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime eventEndDatetime
-    ) {
-        Map<String, Object> map = new HashMap<>();
-        map.put("placeName", "place-" + placeId);
-        map.put("eventName", eventName);
-        map.put("eventStatus", eventStatus);
-        map.put("eventStartDatetime", eventStartDatetime);
-        map.put("eventEndDatetime", eventEndDatetime);
+    public ModelAndView adminEvents(@QuerydslPredicate(root = Event.class) Predicate predicate) {
+        List<EventResponse> events = eventService.getEvents(predicate)
+                .stream()
+                .map(EventResponse::from)
+                .toList();
 
-        return new ModelAndView("admin/events", map);
+        return new ModelAndView(
+                "admin/events",
+                Map.of(
+                        "events", events,
+                        "eventStatus", EventStatus.values()
+                )
+        );
     }
 
     @GetMapping("/events/{eventId}")
     public ModelAndView adminEventDetail(@PathVariable Long eventId) {
-        Map<String, Object> map = new HashMap<>();
-        map.put("event", EventDTO.of(
-                eventId,
-                PlaceDTO.of(
-                        1L,
-                        PlaceType.SPORTS,
-                        "배드민턴장",
-                        "서울시 그리구 그래동",
-                        "010-2222-3333",
-                        33,
-                        null,
-                        LocalDateTime.now(),
-                        LocalDateTime.now()
-                ),
-                "오후 운동",
-                EventStatus.OPENED,
-                LocalDateTime.of(2021, 1, 1, 13, 0, 0),
-                LocalDateTime.of(2021, 1, 1, 16, 0, 0),
-                0,
-                24,
-                "마스크 꼭 착용하세요",
-                LocalDateTime.now(),
-                LocalDateTime.now()
-        ));
+        EventResponse event = eventService.getEvent(eventId)
+                .map(EventResponse::from)
+                .orElseThrow(() -> new GeneralException(ErrorCode.NOT_FOUND));
 
-        return new ModelAndView("admin/event-detail", map);
+        return new ModelAndView(
+                "admin/event-detail",
+                Map.of(
+                        "event", event,
+                        "eventStatus", EventStatus.values()
+                )
+        );
     }
 
 }
