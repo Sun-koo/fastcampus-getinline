@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -20,12 +21,14 @@ import java.util.Optional;
 import java.util.stream.StreamSupport;
 
 @RequiredArgsConstructor
+@Transactional
 @Service
 public class EventService {
 
     private final EventRepository eventRepository;
     private final PlaceRepository placeRepository;
 
+    @Transactional(readOnly = true)
     public List<EventDTO> getEvents(Predicate predicate) {
         try {
             return StreamSupport.stream(eventRepository.findAll(predicate).spliterator(), false)
@@ -36,6 +39,7 @@ public class EventService {
         }
     }
 
+    @Transactional(readOnly = true)
     public Page<EventViewResponse> getEventViewResponse(
             String placeName,
             String eventName,
@@ -58,6 +62,7 @@ public class EventService {
         }
     }
 
+    @Transactional(readOnly = true)
     public Optional<EventDTO> getEvent(Long eventId) {
         try {
             return eventRepository.findById(eventId).map(EventDTO::of);
@@ -72,8 +77,7 @@ public class EventService {
                 return false;
             }
 
-            Place place = placeRepository.findById(eventDTO.placeDto().id())
-                    .orElseThrow(() -> new GeneralException(ErrorCode.NOT_FOUND));
+            Place place = placeRepository.getReferenceById(eventDTO.placeDto().id());
             eventRepository.save(eventDTO.toEntity(place));
             return true;
         } catch (Exception e) {
