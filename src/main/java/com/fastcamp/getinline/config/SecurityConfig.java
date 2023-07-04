@@ -20,13 +20,21 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http.authorizeHttpRequests(auth ->
-                        auth
-                                .requestMatchers("/", "/events/**", "/places/**").permitAll()
-                                .anyRequest().authenticated()
+        http.authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/", "/events/**", "/places/**").permitAll()
+                        .anyRequest().authenticated()
                 )
-                .formLogin(Customizer.withDefaults())
-                .logout(logout -> logout.logoutSuccessUrl("/"))
+                .formLogin(login -> login
+                        .loginPage("/login")
+                        .defaultSuccessUrl("/admin/places")
+                        .failureUrl("/login")
+                        .permitAll()
+                )
+                .logout(logout -> logout
+                        .logoutUrl("/logout")
+                        .logoutSuccessUrl("/")
+                        .permitAll()
+                )
                 .httpBasic(Customizer.withDefaults());
         return http.build();
     }
