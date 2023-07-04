@@ -55,4 +55,7 @@ public record EventResponse(
         );
     }
 
+    public String getPlaceName() {
+        return this.place().placeName();
+    }
 }
