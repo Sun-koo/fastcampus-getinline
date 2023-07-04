@@ -156,8 +156,7 @@ class AdminControllerTest {
                 .andExpect(view().name("redirect:/admin/confirm"))
                 .andExpect(redirectedUrl("/admin/confirm"))
                 .andExpect(flash().attribute("adminOperationStatus", AdminOperationStatus.CREATE))
-                .andExpect(flash().attribute("redirectUrl", "/admin/places"))
-                .andDo(MockMvcResultHandlers.print());
+                .andExpect(flash().attribute("redirectUrl", "/admin/places"));
         then(placeService).should().upsertPlace(placeRequest.toDTO());
     }
 
@@ -281,8 +280,7 @@ class AdminControllerTest {
                 .andExpect(view().name("redirect:/admin/confirm"))
                 .andExpect(redirectedUrl("/admin/confirm"))
                 .andExpect(flash().attribute("adminOperationStatus", AdminOperationStatus.CREATE))
-                .andExpect(flash().attribute("redirectUrl", "/admin/places/" + placeId))
-                .andDo(MockMvcResultHandlers.print());
+                .andExpect(flash().attribute("redirectUrl", "/admin/places/" + placeId));
         then(eventService).should().upsertEvent(eventRequest.toDTO(PlaceDTO.idOnly(placeId)));
     }
 

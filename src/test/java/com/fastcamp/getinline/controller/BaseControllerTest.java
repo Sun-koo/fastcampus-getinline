@@ -38,10 +38,9 @@ class BaseControllerTest {
         // When
         // Then
         mvc.perform(get("/"))
-                .andExpect(status().isOk())
-                .andExpect(content().contentTypeCompatibleWith(MediaType.TEXT_HTML))
-                .andExpect(content().string(containsString("This is Index Page")))
-                .andExpect(view().name("index"))
+                .andExpect(status().isFound())
+                .andExpect(redirectedUrl("/events"))
+                .andExpect(view().name("redirect:/events"))
                 .andDo(print());
     }
 }
