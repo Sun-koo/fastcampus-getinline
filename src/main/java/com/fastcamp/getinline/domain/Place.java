@@ -77,7 +77,7 @@ public class Place {
 
     @ToString.Exclude
     @OrderBy("id")
-    @OneToMany(mappedBy = "place")
+    @OneToMany(mappedBy = "place", cascade = CascadeType.REMOVE)
     private final Set<AdminPlaceMap> adminPlaceMaps = new LinkedHashSet<>();
 
 

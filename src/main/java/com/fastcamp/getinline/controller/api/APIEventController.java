@@ -62,7 +62,7 @@ public class APIEventController {
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/events")
     public APIDataResponse<String> createEvent(@Valid @RequestBody EventRequest eventRequest) {
-        boolean result = eventService.createEvent(eventRequest.toDTO());
+        boolean result = eventService.createEvent(eventRequest.toDTO(null));
 
         return APIDataResponse.of(Boolean.toString(result));
     }
@@ -79,7 +79,7 @@ public class APIEventController {
             @Positive @PathVariable Long eventId,
             @Valid @RequestBody EventRequest eventRequest
     ) {
-        boolean result = eventService.updateEvent(eventId, eventRequest.toDTO());
+        boolean result = eventService.updateEvent(eventId, eventRequest.toDTO(null));
         return APIDataResponse.of(Boolean.toString(result));
     }
 
